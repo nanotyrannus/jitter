@@ -69,6 +69,8 @@ public class JitterUserFrame extends JFrame{
 		gbc.gridy = 2;
 		gbc.gridwidth = 1;
 		this.add(send, gbc);
+		ListenForButton lfb = new ListenForButton();
+		send.addActionListener(lfb);
 		
 		ArrayList<String> feed = new ArrayList<String>();
 		Iterator<String> it = user.getNewsfeed();
@@ -92,7 +94,10 @@ public class JitterUserFrame extends JFrame{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
+			if(arg0.getSource() == send){
+				user.tweet(textInputArea.getText());
+				
+			}
 			
 		}
 		

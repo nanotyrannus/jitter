@@ -69,6 +69,7 @@ public class JitterDriver {
 //			System.out.println(ryanfeed.next());
 //		}
 		JitterUserFrame userframe = new JitterUserFrame(testUsers[0]);
+		JitterUserFrame userframe1 = new JitterUserFrame(testUsers[1]);
 		JitterAdminFrame adminframe = JitterAdminFrame.getInstance(users);
 	}
 
