@@ -9,33 +9,67 @@ public class JitterDriver {
 		//JitterMainFrame frame = new JitterMainFrame();
 		Database users = new Database();
 		
+		JitterGroup[] groups = {new JitterGroup("Schoolmates"),
+							    new JitterGroup("Family"),
+							    new JitterGroup("Classmates")};
+		
+		users.getRoot().addChild(groups[0]);
+		users.getRoot().getChildren().get(0).addChild(groups[2]);
+		users.getRoot().addChild(groups[1]);
+		
 		JitterUser[] testUsers = {new JitterUser("Ryan", users),
 								  new JitterUser("Lauren", users),
-								  new JitterUser("Manuel", users)};
+								  new JitterUser("Manuel", users),
+								  new JitterUser("Mom", users),
+								  new JitterUser("Dad", users)};
 		
-		JitterUser ryan = users.getUser("Ryan");
-		ryan.tweet("Hello!");
-		ryan.tweet("Hello again!");
-		ryan.tweet("THIRD TWEET");
-		ryan.subscribe("Lauren");
-		ryan.subscribe("Lauren1");
 		
-		Object[] list = users.getList().values().toArray();
+		testUsers[0].subscribe("Lauren");
+		testUsers[0].subscribe("asdfg");
+		testUsers[0].subscribe("Manuel");
+		users.getRoot().addChild(testUsers[0]);
+		users.getRoot().addChild(testUsers[1]);
+		users.getRoot().addChild(testUsers[2]);
+		testUsers[0].tweet("Hello");
+		testUsers[1].tweet("Hello");
+		testUsers[2].tweet("Hello");
 		
-		for(Object u : list){
-			System.out.println(u);
-		}
-		
-		ArrayList<String> tweets = users.getUser("Ryan").getTweets();
-		
-		Iterator<String> it = tweets.iterator();
+		Iterator<String> it = testUsers[0].getNewsfeed();
 		
 		while(it.hasNext()){
 			System.out.println(it.next());
 		}
 		
-		JitterUserFrame userframe = new JitterUserFrame();
-		JitterAdminFrame adminframe = new JitterAdminFrame();
+		ArrayList<String> alltweets = users.getRoot().getTweets();
+		for(String s: alltweets){
+			System.out.println(s);
+		}
+		
+		
+//		JitterUser ryan = users.getUser("Ryan");
+//		JitterUser lauren = users.getUser("Lauren");
+//		
+//		ryan.tweet("Hello!");
+//		ryan.tweet("Hello again!");
+//		ryan.tweet("THIRD TWEET");
+//		ryan.subscribe("Lauren");
+//		ryan.subscribe("Lauren1");
+		
+//		Object[] list = users.getList().values().toArray();
+//		lauren.tweet("GOD DAMN IT");
+		
+		
+//		for(Object u : list){
+//			System.out.println(u);
+//		}
+//		
+//		Iterator<String> ryanfeed = ryan.getNewsfeed();
+//		
+//		while(ryanfeed.hasNext()){
+//			System.out.println(ryanfeed.next());
+//		}
+		JitterUserFrame userframe = new JitterUserFrame(testUsers[0]);
+		JitterAdminFrame adminframe = JitterAdminFrame.getInstance(users);
 	}
 
 }

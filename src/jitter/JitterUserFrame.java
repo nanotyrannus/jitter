@@ -3,11 +3,17 @@ package jitter;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.*;
 
 public class JitterUserFrame extends JFrame{
 
+	
+	JitterUser user;
 	JTextArea nameArea, textInputArea;
 	JButton subscribe, send;
 	JList subscriptions, recieved;
@@ -15,11 +21,12 @@ public class JitterUserFrame extends JFrame{
 	JScrollPane scroll;
 	Dimension dim = new Dimension(20, 2);
 	
-	JitterUserFrame(){
+	JitterUserFrame(JitterUser user){
+		this.user = user;
 		this.setSize(400, 200);
 		setLayout(new GridBagLayout());
 		nameArea = new JTextArea(1, 40);
-		nameArea.setText("Sample Name");
+		nameArea.setText(user.getID());
 		nameArea.setEditable(false);
 		gbc.gridx = 0;
 	    gbc.gridy = 0;
@@ -34,8 +41,13 @@ public class JitterUserFrame extends JFrame{
 		
 		this.add(subscribe, gbc);
 		
-		Object[] arr0 = {"User1","User2","User3"};
-		subscriptions = new JList(arr0);
+		ArrayList<JitterUser> subs = new ArrayList<JitterUser>();
+		subs = user.getFollowing();
+		ArrayList<String> names = new ArrayList<String>();
+		for(JitterUser u: subs){
+			names.add(u.getID());
+		}
+		subscriptions = new JList(names.toArray());
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.gridwidth = 5;
@@ -58,9 +70,13 @@ public class JitterUserFrame extends JFrame{
 		gbc.gridwidth = 1;
 		this.add(send, gbc);
 		
+		ArrayList<String> feed = new ArrayList<String>();
+		Iterator<String> it = user.getNewsfeed();
+		while(it.hasNext()){
+			feed.add(it.next());
+		}
 		
-		Object[] arr1 = {"Message1","Message2","Message3"};
-		recieved = new JList(arr1);
+		recieved = new JList(feed.toArray());
 		gbc.gridx = 0;
 		gbc.gridy = 3;
 		gbc.gridwidth = 5;
@@ -70,5 +86,15 @@ public class JitterUserFrame extends JFrame{
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		pack();
 		this.setVisible(true);
+	}
+	
+	private class ListenForButton implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 }
