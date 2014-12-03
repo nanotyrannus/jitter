@@ -98,6 +98,7 @@ public class JitterAdminFrame extends JFrame{
 		validateNamespace = new JButton("Validate Namespace");
 		gbc.gridx = 5;
 		this.add(validateNamespace, gbc);
+		validateNamespace.addActionListener(lfb);
 		
 		tree = new JTree();
 		gbc.gridx = 0;
@@ -151,7 +152,7 @@ public class JitterAdminFrame extends JFrame{
 					count += it.next().getTweets().size();
 				}
 				messageTotal.setText("MESSAGE TOTAL: " + count);
-			}
+			} 
 		}
 	}
 	
@@ -161,6 +162,21 @@ public class JitterAdminFrame extends JFrame{
 		public void actionPerformed(ActionEvent arg0) {
 			if(arg0.getSource() == lastUpdate){
 				updateLastUpdate();
+			} else if(arg0.getSource() == validateNamespace){
+				Iterator<JitterUser> it = db.getList();
+				String cursor;
+				boolean illegal = false;
+				while(it.hasNext()){
+					cursor = it.next().getID();
+					if(cursor.contains(" ")){
+						System.out.println(cursor + " contains a space.");
+						//Only case. Duplicate users not possible with hashmap implementation.
+						illegal = true;
+					}
+				}
+				if(!illegal){
+					System.out.println("Namespace does not contain illegal names.");
+				}
 			}
 		}
 		

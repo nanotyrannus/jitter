@@ -21,7 +21,8 @@ public class JitterDriver {
 								  new JitterUser("Lauren", users),
 								  new JitterUser("Manuel", users),
 								  new JitterUser("Mom", users),
-								  new JitterUser("Dad", users)};
+								  new JitterUser("Dad", users),
+								  new JitterUser("Invalid Test Name", users)};
 		
 		
 
