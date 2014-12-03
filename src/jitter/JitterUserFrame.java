@@ -14,20 +14,26 @@ public class JitterUserFrame extends JFrame{
 
 	
 	JitterUser user;
-	JTextArea nameArea, textInputArea;
+	JTextArea nameArea, textInputArea, joinDate, lastUpdate;
 	JButton subscribe, send;
 	JList subscriptions, recieved;
 	GridBagConstraints gbc = new GridBagConstraints();
-	JScrollPane scroll;
+	JScrollPane scroll, newsScroll, subScroll;
 	Dimension dim = new Dimension(20, 2);
 	
-	JitterUserFrame(JitterUser user){
-		this.user = user;
-		this.setSize(400, 200);
+	JitterUserFrame(JitterUser newUser){
+		ListenForButton lfb = new ListenForButton();
+		
+		user = newUser;
+		user.setFrame(this);
+		this.setSize(600, 500);
 		setLayout(new GridBagLayout());
+		
+		this.setTitle(user.getID());
+		
 		nameArea = new JTextArea(1, 40);
-		nameArea.setText(user.getID());
-		nameArea.setEditable(false);
+		nameArea.setText("Follow a user...");
+		nameArea.setEditable(true);
 		gbc.gridx = 0;
 	    gbc.gridy = 0;
 	    gbc.gridwidth = 3;
@@ -35,30 +41,33 @@ public class JitterUserFrame extends JFrame{
 		this.add(nameArea, gbc);
 		
 		subscribe = new JButton("Follow");
+		subscribe.addActionListener(lfb);
 		gbc.gridx = 4;
 		gbc.gridy = 0;
 		gbc.gridwidth = 1;
 		
 		this.add(subscribe, gbc);
 		
-		ArrayList<JitterUser> subs = new ArrayList<JitterUser>();
-		subs = user.getFollowing();
-		ArrayList<String> names = new ArrayList<String>();
-		for(JitterUser u: subs){
-			names.add(u.getID());
-		}
-		subscriptions = new JList(names.toArray());
+//		ArrayList<JitterUser> subs = new ArrayList<JitterUser>();
+//		subs = user.getFollowing();
+//		
+//		ArrayList<String> names = new ArrayList<String>();
+//		for(JitterUser u: subs){
+//			names.add(u.getID());
+//		}
+		subscriptions = new JList();
+		subScroll = new JScrollPane(subscriptions);
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.gridwidth = 5;
-		this.add(subscriptions, gbc);
+		this.add(subScroll, gbc);
 		
 		textInputArea = new JTextArea(4, 20);
 		textInputArea.setLineWrap(true);
 		textInputArea.setWrapStyleWord(true);
 		scroll = new JScrollPane(textInputArea);
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		textInputArea.setText("Test");
+		textInputArea.setText("Send a tweet...");
 		gbc.gridx = 0;
 		gbc.gridy = 2;
 		gbc.gridwidth = 4;
@@ -69,7 +78,7 @@ public class JitterUserFrame extends JFrame{
 		gbc.gridy = 2;
 		gbc.gridwidth = 1;
 		this.add(send, gbc);
-		ListenForButton lfb = new ListenForButton();
+		
 		send.addActionListener(lfb);
 		
 		ArrayList<String> feed = new ArrayList<String>();
@@ -79,14 +88,28 @@ public class JitterUserFrame extends JFrame{
 		}
 		
 		recieved = new JList(feed.toArray());
+		newsScroll = new JScrollPane(recieved);
+		newsScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		gbc.gridx = 0;
 		gbc.gridy = 3;
 		gbc.gridwidth = 5;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		this.add(recieved, gbc);
+		this.add(newsScroll, gbc);
+		
+		joinDate = new JTextArea("Join date: " + user.getJoinDate());
+		joinDate.setEditable(false);
+		gbc.gridx = 0;
+		gbc.gridy = 4;
+		gbc.gridwidth = 1;
+		this.add(joinDate, gbc);
+		
+		lastUpdate = new JTextArea("Updated: " + user.getLastUpdateFormatted());
+		lastUpdate.setEditable(false);
+		gbc.gridx = 4;
+		this.add(lastUpdate, gbc);
 		
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		pack();
+		
 		this.setVisible(true);
 	}
 	
@@ -96,10 +119,35 @@ public class JitterUserFrame extends JFrame{
 		public void actionPerformed(ActionEvent arg0) {
 			if(arg0.getSource() == send){
 				user.tweet(textInputArea.getText());
-				
+				updateFeed();
+			}  if (arg0.getSource() == subscribe){
+				user.subscribe(nameArea.getText());
+				updateFollowing();
 			}
 			
 		}
 		
+	}
+	
+	public void updateFeed(){
+		DefaultListModel<String> model = new DefaultListModel<String>();
+		Iterator<String> it = user.getNewsfeed();
+		while(it.hasNext()){
+			model.addElement(it.next());
+		}
+		recieved.setModel(model);
+	}
+	
+	public void updateFollowing(){
+		DefaultListModel<String> model = new DefaultListModel<String>();
+		ArrayList<JitterUser> fol = user.getFollowing();
+		for(JitterUser u : fol) {
+			model.addElement(u.getID());
+		}
+		subscriptions.setModel(model);
+	}
+	
+	public void updateLastUpdate(){
+		lastUpdate.setText("Updated: " + user.getLastUpdateFormatted());
 	}
 }

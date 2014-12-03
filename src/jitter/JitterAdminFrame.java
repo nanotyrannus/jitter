@@ -13,10 +13,10 @@ public class JitterAdminFrame extends JFrame{
 
 	Database db;
 	JTree tree;
-	JTextArea userField, groupField;
+	JTextArea userField, groupField, lastUpdatedUser;
 	JButton addUser, addGroup, userTotal, 
 			groupTotal, messageTotal, positivePercent,
-			viewUser;
+			viewUser, lastUpdate, validateNamespace;
 	GridBagConstraints gbc = new GridBagConstraints();
 	
 	public static JitterAdminFrame getInstance(Database db){
@@ -83,6 +83,22 @@ public class JitterAdminFrame extends JFrame{
 		gbc.gridx = 4;
 		this.add(positivePercent, gbc);
 		
+		lastUpdatedUser = new JTextArea("Last update by: " + lastUpdatedUser().getID());
+		gbc.gridx = 0;
+		gbc.gridy = 6;
+		this.add(lastUpdatedUser, gbc);
+		ListenForButton lfb = new ListenForButton();
+
+		
+		lastUpdate = new JButton("Check last update");
+		gbc.gridx = 2;
+		this.add(lastUpdate, gbc);
+		lastUpdate.addActionListener(lfb);
+		
+		validateNamespace = new JButton("Validate Namespace");
+		gbc.gridx = 5;
+		this.add(validateNamespace, gbc);
+		
 		tree = new JTree();
 		gbc.gridx = 0;
 		gbc.gridy = 0;
@@ -95,6 +111,23 @@ public class JitterAdminFrame extends JFrame{
 		
 		pack();
 		this.setVisible(true);
+	}
+	
+	public JitterUser lastUpdatedUser(){
+		JitterUser lastUser, cursor;
+		Iterator<JitterUser> it = db.getList();
+		if(it.hasNext()) {
+			lastUser = it.next();
+		} else {
+			return null;
+		}
+		while(it.hasNext()){
+			cursor = it.next();
+			if(lastUser.getLastUpdateMillis() < cursor.getLastUpdateMillis()){
+				lastUser = cursor;
+			}
+		}
+		return lastUser;
 	}
 	
 	private class ListenForCount implements ActionListener {
@@ -120,7 +153,21 @@ public class JitterAdminFrame extends JFrame{
 				messageTotal.setText("MESSAGE TOTAL: " + count);
 			}
 		}
+	}
+	
+	private class ListenForButton implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if(arg0.getSource() == lastUpdate){
+				updateLastUpdate();
+			}
+		}
 		
+	}
+	
+	public void updateLastUpdate(){
+		lastUpdatedUser.setText("Last update by: " + lastUpdatedUser().getID());
 	}
 	
 }

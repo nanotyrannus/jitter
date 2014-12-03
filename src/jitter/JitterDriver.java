@@ -24,15 +24,21 @@ public class JitterDriver {
 								  new JitterUser("Dad", users)};
 		
 		
-		testUsers[0].subscribe("Lauren");
-		testUsers[0].subscribe("asdfg");
-		testUsers[0].subscribe("Manuel");
+
 		users.getRoot().addChild(testUsers[0]);
 		users.getRoot().addChild(testUsers[1]);
 		users.getRoot().addChild(testUsers[2]);
+		
+		JitterUserFrame userframe = new JitterUserFrame(testUsers[0]);
+		JitterUserFrame userframe1 = new JitterUserFrame(testUsers[1]);
+		JitterAdminFrame adminframe = JitterAdminFrame.getInstance(users);
+				testUsers[0].subscribe("Lauren");
+		testUsers[0].subscribe("asdfg");
+		testUsers[0].subscribe("Manuel");
+		testUsers[1].subscribe("Ryan");
 		testUsers[0].tweet("Hello");
 		testUsers[1].tweet("Hello");
-		testUsers[2].tweet("Hello");
+		//testUsers[2].tweet("Hello");
 		
 		Iterator<String> it = testUsers[0].getNewsfeed();
 		
@@ -68,9 +74,7 @@ public class JitterDriver {
 //		while(ryanfeed.hasNext()){
 //			System.out.println(ryanfeed.next());
 //		}
-		JitterUserFrame userframe = new JitterUserFrame(testUsers[0]);
-		JitterUserFrame userframe1 = new JitterUserFrame(testUsers[1]);
-		JitterAdminFrame adminframe = JitterAdminFrame.getInstance(users);
+
 	}
 
 }
